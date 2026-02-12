@@ -3,5 +3,9 @@ name = "note"
 version = "0.1.0"
 edition = "2024"
 license = "MIT"
+authors = ["Taiga Ito Boyintyoko@gmail.com"]
+description = "Simple memo CLI with fzf support"
+repository = "https://github.com/boyintyoko/note"
+
 
 [dependencies]
