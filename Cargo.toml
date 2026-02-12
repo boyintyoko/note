@@ -9,3 +9,7 @@ repository = "https://github.com/boyintyoko/note"
 
 
 [dependencies]
+
+[[bin]]
+name = "note"
+path = "src/main.rs"
