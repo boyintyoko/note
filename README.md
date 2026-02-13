@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/boyintyoko/boyintyoko.github.io/refs/heads/main/note/GitHub_Note_Icon.png" width="300" />
+</p>
+
 # note - Simple Memo CLI
 
 `note` is a simple command-line memo tool.  
