@@ -18,20 +18,29 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+
       - name: Install Rust
         run: rustup update stable
+
       - name: Build Release
         run: cargo build --release
-      - name: Pack binaries
+
+      - name: Pack binaries (Linux/macOS)
+        if: runner.os != 'Windows'
+        shell: bash
         run: |
           mkdir -p artifacts
-          if [ "${{ matrix.os }}" = "windows-latest" ]; then
-            zip -j artifacts/note-windows-${{ github.ref_name }}.zip target/release/note.exe
-            tar -czf artifacts/note-windows-${{ github.ref_name }}.tar.gz -C target/release note.exe
-          else
-            zip -j artifacts/note-${{ matrix.os }}-${{ github.ref_name }}.zip target/release/note
-            tar -czf artifacts/note-${{ matrix.os }}-${{ github.ref_name }}.tar.gz -C target/release note
-          fi
+          zip -j artifacts/note-${{ matrix.os }}-${{ github.ref_name }}.zip target/release/note
+          tar -czf artifacts/note-${{ matrix.os }}-${{ github.ref_name }}.tar.gz -C target/release note
+
+      - name: Pack binaries (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path artifacts
+          Compress-Archive -Path target/release/note.exe -DestinationPath artifacts/note-windows-${{ github.ref_name }}.zip
+          tar -czf artifacts/note-windows-${{ github.ref_name }}.tar.gz -C target/release note.exe
+
       - name: Upload to release
         uses: softprops/action-gh-release@v1
         with:
@@ -40,7 +49,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to crates.io
-        if: matrix.os == 'ubuntu-latest'
-        env:
-          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_TOKEN }}
-        run: cargo publish --no-verify --allow-dirty
+        if: runner.os == 'Linux'
+        run: |
+          cargo publish --token ${{ secrets.CARGO_TOKEN }} --no-verify
+
