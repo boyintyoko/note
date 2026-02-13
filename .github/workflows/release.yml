@@ -6,55 +6,31 @@ on:
       - 'v*.*.*'
 
 jobs:
-  release:
-    runs-on: ubuntu-latest
+  build:
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Setup Rust
-        uses: rust-lang/setup-rust@v1
-        with:
-          rust-version: stable
-
+      - name: Install Rust
+        run: rustup update stable
 
       - name: Build Release
         run: cargo build --release
 
-      - name: Package binary
+      - name: Pack binaries
         run: |
-          BIN_NAME=myproject
-          OS_NAME=${{ matrix.os }}
-          case $OS_NAME in
-            ubuntu-latest) TARGET=linux ;;
-            macos-latest) TARGET=macos ;;
-            windows-latest) TARGET=windows ;;
-          esac
+          mkdir -p artifacts
+          tar -czf artifacts/myproject-${{ matrix.os }}.tar.gz -C target/release myproject
+          zip -j artifacts/myproject-${{ matrix.os }}.zip target/release/myproject
 
-          if [[ "$OS_NAME" == "windows-latest" ]]; then
-            EXT=".exe"
-          else
-            EXT=""
-          fi
-
-          mkdir -p release
-          tar -czf release/${BIN_NAME}-${TARGET}-${{ github.ref_name }}.tar.gz -C target/release ${BIN_NAME}${EXT}
-          zip -j release/${BIN_NAME}-${TARGET}-${{ github.ref_name }}.zip target/release/${BIN_NAME}${EXT}
-
-      - name: Package source
-        run: |
-          mkdir -p release
-          zip -r release/myproject-${{ github.ref_name }}-source.zip .
-          tar -czf release/myproject-${{ github.ref_name }}-source.tar.gz .
-
-      - name: Create GitHub Release
+      - name: Upload to release
         uses: softprops/action-gh-release@v1
         with:
-          files: release/*
+          files: artifacts/*
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
