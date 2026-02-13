@@ -1,7 +1,21 @@
-# note - simple memo CLI
+# note - Simple Memo CLI
 
-Simple command-line memo tool with optional fzf support.
+`note` is a simple command-line memo tool.  
+If [fzf](https://github.com/junegunn/fzf) is installed, selecting memos becomes much easier.
 
-## How to use
+## Features
 
-note --help
+- Create, delete, edit, and view memos
+- Rename memos
+- Append content to memos
+- Fuzzy search with `fzf` (optional)
+- Edit memos with your preferred editor (`note set editor <editor>`)
+
+---
+
+## Installation
+
+### Install via Cargo
+
+```sh
+cargo install note-cli
