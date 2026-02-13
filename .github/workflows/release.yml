@@ -5,6 +5,10 @@ on:
     tags:
       - 'v*.*.*'
 
+permissions:
+  contents: write
+  packages: write
+
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -14,13 +18,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-
       - name: Install Rust
         run: rustup update stable
-
       - name: Build Release
         run: cargo build --release
-
       - name: Pack binaries
         run: |
           mkdir -p artifacts
@@ -31,7 +32,6 @@ jobs:
             zip -j artifacts/note-${{ matrix.os }}-${{ github.ref_name }}.zip target/release/note
             tar -czf artifacts/note-${{ matrix.os }}-${{ github.ref_name }}.tar.gz -C target/release note
           fi
-
       - name: Upload to release
         uses: softprops/action-gh-release@v1
         with:
