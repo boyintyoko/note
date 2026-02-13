@@ -18,20 +18,25 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+
       - name: Install Rust
         run: rustup update stable
+
       - name: Build Release
         run: cargo build --release
+
       - name: Pack binaries
+        shell: bash
         run: |
           mkdir -p artifacts
-          if [ "${{ matrix.os }}" = "windows-latest" ]; then
-            zip -j artifacts/note-windows-${{ github.ref_name }}.zip target/release/note.exe
-            tar -czf artifacts/note-windows-${{ github.ref_name }}.tar.gz -C target/release note.exe
+          if [[ "${{ runner.os }}" == "Windows" ]]; then
+            pwsh -Command "Compress-Archive -Path target\release\note.exe -DestinationPath artifacts\note-windows-${{ github.ref_name }}.zip"
+            pwsh -Command "tar -czf artifacts/note-windows-${{ github.ref_name }}.tar.gz -C target/release note.exe"
           else
-            zip -j artifacts/note-${{ matrix.os }}-${{ github.ref_name }}.zip target/release/note
-            tar -czf artifacts/note-${{ matrix.os }}-${{ github.ref_name }}.tar.gz -C target/release note
+            zip -j artifacts/note-${{ runner.os }}-${{ github.ref_name }}.zip target/release/note
+            tar -czf artifacts/note-${{ runner.os }}-${{ github.ref_name }}.tar.gz -C target/release note
           fi
+
       - name: Upload to release
         uses: softprops/action-gh-release@v1
         with:
