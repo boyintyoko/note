@@ -24,8 +24,13 @@ jobs:
       - name: Pack binaries
         run: |
           mkdir -p artifacts
-          tar -czf artifacts/myproject-${{ matrix.os }}.tar.gz -C target/release myproject
-          zip -j artifacts/myproject-${{ matrix.os }}.zip target/release/myproject
+          if [ "${{ matrix.os }}" = "windows-latest" ]; then
+            zip -j artifacts/note-windows-${{ github.ref_name }}.zip target/release/note.exe
+            tar -czf artifacts/note-windows-${{ github.ref_name }}.tar.gz -C target/release note.exe
+          else
+            zip -j artifacts/note-${{ matrix.os }}-${{ github.ref_name }}.zip target/release/note
+            tar -czf artifacts/note-${{ matrix.os }}-${{ github.ref_name }}.tar.gz -C target/release note
+          fi
 
       - name: Upload to release
         uses: softprops/action-gh-release@v1
