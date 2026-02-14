@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/boyintyoko/boyintyoko.github.io/refs/heads/main/note/GitHub_Note_Icon.png" width="300" />
+  <img src="https://raw.githubusercontent.com/boyintyoko/boyintyoko.github.io/refs/heads/main/note/Github_Note_Cli.png" width="300" />
 </p>
 
 # note - Simple Memo CLI
